@@ -65,7 +65,7 @@ exports.addUploadCV = async (req, res) => {
       isActive: true,
       isDelete: false,
     });
-
+    
     console.log("cv__________", cv);
 
     // Send email notification
@@ -159,6 +159,8 @@ exports.updateUploadCV = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, phone, subject, message } = req.body;
+    delete req.body.captchaToken;
+
     const cv = req.file ? req.file.path : null;
 
     const uploadCV = await UploadCV.findByPk(id);

@@ -3,6 +3,9 @@ const apiResponse = require("../helper/apiResponse");
 
 exports.addTestimonial = async (req, res) => {
   try {
+    if (!req.file) {
+      return apiResponse.validationErrorWithData(res, "Image is required");
+    }
     const { name, experience, company_Name, review, star } = req.body;
     const img = req.file ? req.file.path : null;
 

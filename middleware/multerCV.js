@@ -35,6 +35,7 @@ const upload = multer({
   storage,
   fileFilter,
   // limits: { fileSize: 300 * 1024 } // 300 KB limit
+    limits: { fileSize: 2 * 1024 * 1024 }
 });
 
 // Custom middleware to check file size after upload

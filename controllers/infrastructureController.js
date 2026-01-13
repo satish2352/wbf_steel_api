@@ -3,6 +3,10 @@ const apiResponse = require('../helper/apiResponse');
 
 exports.addInfrastructure = async (req, res) => {
   try {
+
+    if (!req.file) {
+      return apiResponse.validationErrorWithData(res, "Image is required");
+    }
     const { title, subtitle, desc } = req.body;
     const img = req.file ? req.file.path : null;
 
@@ -24,6 +28,11 @@ exports.updateInfrastructure = async (req, res) => {
     if (!infrastructure) {
       return apiResponse.notFoundResponse(res, 'Infrastructure not found');
     }
+
+    if (!title || !desc) {
+  return apiResponse.validationErrorWithData(res, "Title and Description are required");
+}
+
 
     infrastructure.img = img || infrastructure.img;
     infrastructure.title = title;

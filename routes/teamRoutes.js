@@ -16,7 +16,14 @@ const {
 
 const router = express.Router();
 
-router.post('/create-teammember', upload.single('img'), authenticateToken, validateTeamMember, addTeamMember);
+router.post(
+  "/create-teammember",
+  authenticateToken,
+  upload.single("img"),   // MUST be before validation
+  validateTeamMember,
+  addTeamMember
+);
+
 router.put('/update-teammember/:id', upload.single('img'), authenticateToken, validateTeamMember, validateTeamMemberId, updateTeamMember);
 router.get('/list-web-teammembers', getWebTeamMembers);
 router.get('/list-teammembers', authenticateToken, getTeamMembers);
