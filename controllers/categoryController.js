@@ -265,7 +265,12 @@ exports.getWebCategory = async (req, res) => {
 exports.getCategory = async (req, res) => {
   try {
     
-    const categories = await Category.findAll();
+    // const categories = await Category.findAll();
+    const categories = await Category.findAll({
+      where: {
+        isDelete: false,   // IMPORTANT
+      }
+    });
 
     // Fetch all active projects
     const activeProjects = await ProjectDetails.findAll({
@@ -332,7 +337,9 @@ exports.isDeleteStatus = async (req, res) => {
       return apiResponse.notFoundResponse(res, "Category not found");
     }
 
-    Category1.isDelete = !Category1.isDelete;
+    // Category1.isDelete = !Category1.isDelete;
+    Category1.isDelete = true;
+    Category1.isActive = false;
     await Category1.save();
 
     return apiResponse.successResponseWithData(
