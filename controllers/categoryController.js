@@ -262,7 +262,49 @@ exports.getWebCategory = async (req, res) => {
     return apiResponse.ErrorResponse(res, "Get Category failed");
   }
 };
+
 exports.getCategory = async (req, res) => {
+  try {
+    
+    // const categories = await Category.findAll();
+    const categories = await Category.findAll({
+      where: {
+        isDelete: false,   // IMPORTANT
+         isActive: true,   // IMPORTANT
+      }
+    });
+
+    // Fetch all active projects
+    const activeProjects = await ProjectDetails.findAll({
+      where: { isDelete: 0 },
+      attributes: ['project_category_id'],
+    });
+
+    // Get category IDs that have active projects
+    const activeCategoryIds = new Set(activeProjects.map(project => project.project_category_id));
+
+    // Sort categories based on whether they have active projects
+    const sortedCategories = categories.sort((a, b) => {
+      const aHasProject = activeCategoryIds.has(a.id);
+      const bHasProject = activeCategoryIds.has(b.id);
+
+      if (aHasProject && !bHasProject) return -1;
+      if (!aHasProject && bHasProject) return 1;
+      return 0;
+    });
+  
+
+    return apiResponse.successResponseWithData( 
+      res,
+      "Category retrieved successfully",
+      sortedCategories
+    );
+  } catch (error) {
+    console.error("Get Category failed", error);
+    return apiResponse.ErrorResponse(res, "Get Category failed");
+  }
+};
+exports.getCategoryForAdmin = async (req, res) => {
   try {
     
     // const categories = await Category.findAll();
