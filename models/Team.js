@@ -18,10 +18,10 @@ const Team = sequelize.define('Team', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  position_no: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
+  // position_no: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: false,
+  // },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,

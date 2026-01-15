@@ -16,11 +16,11 @@ exports.validateTeamMember = [
     .withMessage('Description is required')
     .isString()
     .withMessage('Description must be a string'),
-  body('position_no')
-    .notEmpty()
-    .withMessage('Position number is required')
-    .isInt()
-    .withMessage('Position number must be an integer'),
+  // body('position_no')
+  //   .notEmpty()
+  //   .withMessage('Position number is required')
+  //   .isInt()
+  //   .withMessage('Position number must be an integer'),
 ];
 
 exports.validateTeamMemberId = [

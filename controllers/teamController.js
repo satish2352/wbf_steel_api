@@ -66,10 +66,10 @@ exports.addTeamMember = async (req, res) => {
    const name = req.body.name;
 const designation = req.body.designation;
 const description = req.body.description;
-const position_no = parseInt(req.body.position_no, 10);
-if (isNaN(position_no)) {
-  return apiResponse.validationErrorWithData(res, "Invalid position number");
-}
+// const position_no = parseInt(req.body.position_no, 10);
+// if (isNaN(position_no)) {
+//   return apiResponse.validationErrorWithData(res, "Invalid position number");
+// }
 
 
     const img = req.file ? req.file.path : null;
@@ -80,16 +80,16 @@ if (isNaN(position_no)) {
 
 
     // 🔥 Shift existing members down
-    await Team.update(
-      { position_no: Sequelize.literal("position_no + 1") },
-      {
-        where: {
-          position_no: { [Sequelize.Op.gte]: position_no },
-          isDelete: false,
-        },
-        transaction,
-      }
-    );
+    // await Team.update(
+    //   { position_no: Sequelize.literal("position_no + 1") },
+    //   {
+    //     where: {
+    //       position_no: { [Sequelize.Op.gte]: position_no },
+    //       isDelete: false,
+    //     },
+    //     transaction,
+    //   }
+    // );
 
     // ✅ Insert new team member
     const teamMember = await Team.create(
@@ -98,7 +98,7 @@ if (isNaN(position_no)) {
         name,
         designation,
         description,
-        position_no,
+        // position_no,
         isActive: true,
         isDelete: false,
       },
@@ -211,7 +211,7 @@ exports.updateTeamMember = async (req, res) => {
 
   try {
     const { id } = req.params;
-    const { name, designation, description, position_no } = req.body;
+    const { name, designation, description } = req.body;
     const img = req.file ? req.file.path : null;
 
     // Find the team member to update
@@ -222,66 +222,66 @@ exports.updateTeamMember = async (req, res) => {
     }
 
     // 🔴 Check if the new position_no already exists for another team member
-    const positionExists = await Team.findOne({
-      where: {
-        position_no: position_no,
-        id: { [Sequelize.Op.ne]: id }, // Exclude the current team member
-        isDelete: false, // Ensure we're not looking at deleted records
-      },
-    });
+    // const positionExists = await Team.findOne({
+    //   where: {
+    //     position_no: position_no,
+    //     id: { [Sequelize.Op.ne]: id }, // Exclude the current team member
+    //     isDelete: false, // Ensure we're not looking at deleted records
+    //   },
+    // });
 
-    if (positionExists) {
-      // If position_no already exists for another team member, return an error
-      await transaction.rollback(); // Rollback changes since nothing should be updated
-      return apiResponse.ErrorResponse(
-        res,
-        "Position no already exists, please enter another number"
-      );
-    }
+    // if (positionExists) {
+    //   // If position_no already exists for another team member, return an error
+    //   await transaction.rollback(); // Rollback changes since nothing should be updated
+    //   return apiResponse.ErrorResponse(
+    //     res,
+    //     "Position no already exists, please enter another number"
+    //   );
+    // }
 
-    // Adjust positions only if the position_no has changed
-    if (teamMember.position_no !== position_no) {
-      if (position_no < teamMember.position_no) {
-        await Team.update(
-          { position_no: Sequelize.literal("position_no + 1") },
-          {
-            where: {
-              position_no: {
-                [Sequelize.Op.between]: [
-                  position_no,
-                  teamMember.position_no - 1,
-                ],
-              },
-              isDelete: false,
-            },
-            transaction,
-          }
-        );
-      } else {
-        await Team.update(
-          { position_no: Sequelize.literal("position_no - 1") },
-          {
-            where: {
-              position_no: {
-                [Sequelize.Op.between]: [
-                  teamMember.position_no + 1,
-                  position_no,
-                ],
-              },
-              isDelete: false,
-            },
-            transaction,
-          }
-        );
-      }
-    }
+    // // Adjust positions only if the position_no has changed
+    // if (teamMember.position_no !== position_no) {
+    //   if (position_no < teamMember.position_no) {
+    //     await Team.update(
+    //       { position_no: Sequelize.literal("position_no + 1") },
+    //       {
+    //         where: {
+    //           position_no: {
+    //             [Sequelize.Op.between]: [
+    //               position_no,
+    //               teamMember.position_no - 1,
+    //             ],
+    //           },
+    //           isDelete: false,
+    //         },
+    //         transaction,
+    //       }
+    //     );
+    //   } else {
+    //     await Team.update(
+    //       { position_no: Sequelize.literal("position_no - 1") },
+    //       {
+    //         where: {
+    //           position_no: {
+    //             [Sequelize.Op.between]: [
+    //               teamMember.position_no + 1,
+    //               position_no,
+    //             ],
+    //           },
+    //           isDelete: false,
+    //         },
+    //         transaction,
+    //       }
+    //     );
+    //   }
+    // }
 
     // Update the team member
     teamMember.img = img || teamMember.img;
     teamMember.name = name;
     teamMember.designation = designation;
     teamMember.description = description;
-    teamMember.position_no = position_no;
+    // teamMember.position_no = position_no;
     await teamMember.save({ transaction });
 
     await transaction.commit();
@@ -303,7 +303,9 @@ exports.getWebTeamMembers = async (req, res) => {
   try {
     const teamMembers = await Team.findAll({
       where: { isDelete: 0, isActive: 1 },
-      order: [["position_no", "ASC"]], // Sort by position_no
+      // order: [["position_no", "ASC"]], // Sort by position_no
+      order: [["createdAt", "ASC"]],
+
     });
 
     const baseUrl = `${process.env.SERVER_PATH}`;
