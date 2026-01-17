@@ -74,6 +74,9 @@ exports.getWebBlogDetails = async (req, res) => {
     const blogDetailsWithBaseUrl = blogDetails.map((blogDetail) => ({
       ...blogDetail.toJSON(), // Convert Sequelize instance to plain object
       img: blogDetail.img ? baseUrl + blogDetail.img.replace(/\\/g, "/") : null,
+       img2: blogDetail.img2
+        ? baseUrl + blogDetail.img2.replace(/\\/g, "/")
+        : null,
     }));
 
     return apiResponse.successResponseWithData(
